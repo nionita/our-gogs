@@ -1,0 +1,32 @@
+version: '3'
+
+services:
+  db:
+    image: mariadb
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    restart: always
+    volumes:
+      - db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=setrootpassword
+    env_file:
+      - db.env
+
+  gogs:
+    image: gogs/gogs:0.11.91
+    restart: always
+    ports:
+      - 80:3000
+      - 443:22
+    volumes:
+      - data:/data
+    environment:
+      - MYSQL_HOST=db
+    env_file:
+      - db.env
+    depends_on:
+      - db
+
+volumes:
+  db:
+  data:
